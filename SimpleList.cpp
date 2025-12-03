@@ -17,7 +17,10 @@ SimpleList<T>::~SimpleList() {
             }
         }
     }
+
     delete[] elements;
+    elements = nullptr;
+    numElements = 0;
 }
 
 template <class T>
