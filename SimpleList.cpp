@@ -1,5 +1,9 @@
 #include "SimpleList.h"
 #include <type_traits>
+#include <stdexcept>
+
+template <class T>
+constexpr bool is_pointer_v = std::is_pointer<T>::value;
 
 template <class T>
 SimpleList<T>::SimpleList() {
@@ -9,11 +13,11 @@ SimpleList<T>::SimpleList() {
 
 template <class T>
 SimpleList<T>::~SimpleList() {
-    if constexpr (std::is_pointer_v<T>) {
+    if constexpr (is_pointer_v<T>) {
         for (int i = 0; i < numElements; i++) {
             if (elements[i] != nullptr) {
                 delete elements[i];
-                elements[i] = nullptr;
+                elements[i] = nullptr; 
             }
         }
     }
@@ -63,11 +67,19 @@ template <class T>
 void SimpleList<T>::remove(int index) {
     if (empty())
         throw EmptyListException();
+    
     if (index < 0 || index >= numElements)
         throw InvalidIndexException();
+
+    if constexpr (is_pointer_v<T>) {
+        if (elements[index] != nullptr) {
+            delete elements[index];
+        }
+    }
 
     for (int i = index; i < numElements - 1; i++) {
         elements[i] = elements[i + 1];
     }
+    
     numElements--;
 }
